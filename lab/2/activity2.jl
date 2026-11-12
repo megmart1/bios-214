@@ -273,15 +273,14 @@ md"""
     5. Define `gradient!` to calculate the gradient of `loss` using finite differences with `FiniteDiff.finite_difference_gradient!`. Optim will call this function during optimization in the next step.
     6. Pass `gradient!` to `Optim.optimize` with `Optim.LBFGS()` or `Optim.GradientDescent()` to optimize the RF waveform. Save the result as `optimization`, using 10 iterations. Set `store_trace=true` to save the loss history for the next plot.
 
-       **Optional speed-up:** if the optimization is slow, you can give your coding agent this prompt:
+       To keep the optimization fast:
+       - Enable Metal in `forward`: change `"gpu"=>false` to `"gpu"=>true`.
+       - Before computing `b` and `design_params`, remove empty spins: `obj_design = obj_design[obj_design.ρ .> 0]`
+       - Use forward finite differences with an explicit step: `FiniteDiff.finite_difference_gradient!(G, z -> loss(z, design_params), x, Val(:forward); relstep=1e-4)`
+       - Keep your image, RF parameters, gradients and timing unchanged. Keep `verbose=false`.
+       - Run 10 L-BFGS iterations with `store_trace=true`.
 
-       > - Enable Metal in `forward`: change `"gpu"=>false` to `"gpu"=>true`.
-       > - Before computing `b` and `design_params`, remove empty spins: `obj_design = obj_design[obj_design.ρ .> 0]`
-       > - Use forward finite differences with an explicit step: `FiniteDiff.finite_difference_gradient!(G, z -> loss(z, design_params), x, Val(:forward); relstep=1e-4)`
-       > - Keep my image, RF parameters, gradients and timing unchanged. Keep `verbose=false`.
-       > - Run 10 L-BFGS iterations with `store_trace=true`.
-       >
-       > After finishing, report the actual iteration count, total wall time and relative loss reduction. Show the loss curve and optimized excitation on the 128×128 validation grid. The loss now averages over nonzero spins, so its absolute values differ from the original normalization.
+       After finishing, report the actual iteration count, total wall time and relative loss reduction. Show the loss curve and optimized excitation on the 128×128 validation grid. The loss now averages over nonzero spins, so its absolute values differ from the original normalization.
 
     7. Plot the loss versus iteration.
     8. Create `optimized_excitation` from a copy of `initial_guess`, using `x = Optim.minimizer(optimization)`.
