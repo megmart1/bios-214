@@ -275,7 +275,6 @@ md"""
 
        **Optional speed-up:** if the optimization is slow, you can give your coding agent this prompt:
 
-       > Please optimize my activity2.jl in a working copy:
        > - Enable Metal in `forward`: change `"gpu"=>false` to `"gpu"=>true`.
        > - Before computing `b` and `design_params`, remove empty spins: `obj_design = obj_design[obj_design.ρ .> 0]`
        > - Use forward finite differences with an explicit step: `FiniteDiff.finite_difference_gradient!(G, z -> loss(z, design_params), x, Val(:forward); relstep=1e-4)`
