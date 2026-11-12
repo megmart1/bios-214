@@ -274,13 +274,13 @@ md"""
     6. Pass `gradient!` to `Optim.optimize` with `Optim.LBFGS()` or `Optim.GradientDescent()` to optimize the RF waveform. Save the result as `optimization`, using 10 iterations. Set `store_trace=true` to save the loss history for the next plot.
 
        To keep the optimization fast:
-       - Enable Metal in `forward`: change `"gpu"=>false` to `"gpu"=>true`.
+       - Enable Metal in `forward`: set `"gpu"=>true`.
        - Before computing `b` and `design_params`, remove empty spins: `obj_design = obj_design[obj_design.ρ .> 0]`
        - Use forward finite differences with an explicit step: `FiniteDiff.finite_difference_gradient!(G, z -> loss(z, design_params), x, Val(:forward); relstep=1e-4)`
        - Keep your image, RF parameters, gradients and timing unchanged. Keep `verbose=false`.
        - Run 10 L-BFGS iterations with `store_trace=true`.
 
-       After finishing, report the actual iteration count, total wall time and relative loss reduction. Show the loss curve and optimized excitation on the 128×128 validation grid. The loss now averages over nonzero spins, so its absolute values differ from the original normalization.
+       After finishing, report the actual iteration count, total wall time and relative loss reduction. The loss now averages over nonzero spins, so its absolute values differ from the original normalization.
 
     7. Plot the loss versus iteration.
     8. Create `optimized_excitation` from a copy of `initial_guess`, using `x = Optim.minimizer(optimization)`.
